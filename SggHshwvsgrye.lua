@@ -1,14 +1,14 @@
--- Part 1: Base ScreenGui + Main Frame + Watermark + Keybind Frame
+-- Modern GUI Script - Part 1
+
+local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
-local Players = game:GetService("Players")
 
 local Library = {}
 Library.Tabs = {}
 Library.Keybinds = {}
-Library.WatermarkText = "Pepsi UI | Demo"
 
--- Random isim üret (bypass)
+-- Random CoreGui isim
 local function randomString(len)
     local chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
     local s = ''
@@ -24,30 +24,36 @@ ScreenGui.Name = randomString(8)
 ScreenGui.Parent = game:GetService("CoreGui")
 ScreenGui.ResetOnSpawn = false
 
--- Main Frame
+-- Ana Frame
 local MainFrame = Instance.new("Frame")
 MainFrame.Size = UDim2.new(0.8,0,0.6,0)
 MainFrame.Position = UDim2.new(0.1,0,0.2,0)
 MainFrame.BackgroundColor3 = Color3.fromRGB(25,25,25)
+MainFrame.BackgroundTransparency = 0.05
 MainFrame.Active = true
-MainFrame.Draggable = true
 MainFrame.Parent = ScreenGui
 
--- UICorner ve Shadow
+-- UIGradient ile modern arka plan
+local gradient = Instance.new("UIGradient")
+gradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0,Color3.fromRGB(20,20,30)), ColorSequenceKeypoint.new(1,Color3.fromRGB(35,35,50))}
+gradient.Rotation = 45
+gradient.Parent = MainFrame
+
+-- UICorner ve UIStroke
 local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(0,12)
+UICorner.CornerRadius = UDim.new(0,16)
 UICorner.Parent = MainFrame
 
 local UIStroke = Instance.new("UIStroke")
-UIStroke.Color = Color3.fromRGB(50,50,50)
+UIStroke.Color = Color3.fromRGB(60,60,80)
 UIStroke.Thickness = 2
 UIStroke.Parent = MainFrame
 
 -- Başlık
 local Title = Instance.new("TextLabel")
 Title.Size = UDim2.new(1,0,0,30)
-Title.BackgroundColor3 = Color3.fromRGB(35,35,35)
-Title.Text = "🔥 Pepsi Hile Menu"
+Title.BackgroundTransparency = 1
+Title.Text = "🔥 Modern Hile Menu"
 Title.TextColor3 = Color3.fromRGB(255,255,255)
 Title.Font = Enum.Font.GothamBold
 Title.TextSize = 20
@@ -62,24 +68,25 @@ Watermark.TextColor3 = Color3.fromRGB(0,255,0)
 Watermark.Font = Enum.Font.GothamBold
 Watermark.TextSize = 14
 Watermark.TextXAlignment = Enum.TextXAlignment.Right
-Watermark.Text = Library.WatermarkText
+Watermark.Text = "ModernUI | Demo"
 Watermark.Parent = ScreenGui
 
 RunService.RenderStepped:Connect(function(dt)
     local fps = math.floor(1/dt)
-    Watermark.Text = Library.WatermarkText.." | FPS: "..fps
+    Watermark.Text = "ModernUI | FPS: "..fps
 end)
 
--- Keybind Frame (sol panel)
+-- Keybind panel (solda küçük panel)
 local KeybindFrame = Instance.new("Frame")
 KeybindFrame.Size = UDim2.new(0,200,0,220)
 KeybindFrame.Position = UDim2.new(0,10,0.2,0)
 KeybindFrame.BackgroundColor3 = Color3.fromRGB(30,30,30)
+KeybindFrame.BackgroundTransparency = 0.05
 KeybindFrame.Parent = ScreenGui
 
 local KeyTitle = Instance.new("TextLabel")
 KeyTitle.Size = UDim2.new(1,0,0,25)
-KeyTitle.BackgroundColor3 = Color3.fromRGB(50,50,50)
+KeyTitle.BackgroundTransparency = 1
 KeyTitle.TextColor3 = Color3.fromRGB(255,255,255)
 KeyTitle.Text = "Keybinds"
 KeyTitle.Font = Enum.Font.Gotham
@@ -91,7 +98,6 @@ KeyLayout.FillDirection = Enum.FillDirection.Vertical
 KeyLayout.Padding = UDim.new(0,2)
 KeyLayout.Parent = KeybindFrame
 
--- Keybind ekleme fonksiyonu
 function Library:CreateKeybind(name,defaultKey,callback)
     defaultKey = defaultKey or Enum.KeyCode.E
     local lbl = Instance.new("TextLabel")
@@ -128,30 +134,40 @@ function Library:CreateKeybind(name,defaultKey,callback)
     end)
 end
 
-
-
--- Part 2: Tab sistemi + Content Frame
--- Tab Bar (sol panel zaten MainFrame içinde olacak)
+-- Sol tab paneli
 local TabBar = Instance.new("Frame")
-TabBar.Size = UDim2.new(0.2,0,1,-30)
+TabBar.Size = UDim2.new(0,150,1,-30)
 TabBar.Position = UDim2.new(0,0,0,30)
-TabBar.BackgroundColor3 = Color3.fromRGB(40,40,40)
+TabBar.BackgroundColor3 = Color3.fromRGB(40,40,50)
+TabBar.BackgroundTransparency = 0.05
 TabBar.Parent = MainFrame
 
 local TabLayout = Instance.new("UIListLayout")
 TabLayout.FillDirection = Enum.FillDirection.Vertical
-TabLayout.SortOrder = Enum.SortOrder.LayoutOrder
 TabLayout.Padding = UDim.new(0,5)
 TabLayout.Parent = TabBar
 
--- Content Frame (tab içerikleri burada olacak)
+Library.MainFrame = MainFrame
+Library.TabBar = TabBar
+Library.KeybindFrame = KeybindFrame
+Library.Watermark = Watermark
+
+-- Part 2/5: Tab sistemi + Content Frame + Section container
+
+-- Sağ panel: seçilen tab içeriği
 local ContentFrame = Instance.new("Frame")
-ContentFrame.Size = UDim2.new(0.8,0,1,-30)
-ContentFrame.Position = UDim2.new(0.2,0,0,30)
-ContentFrame.BackgroundColor3 = Color3.fromRGB(50,50,50)
+ContentFrame.Size = UDim2.new(1,-150,1,-30)
+ContentFrame.Position = UDim2.new(0,150,0,30)
+ContentFrame.BackgroundColor3 = Color3.fromRGB(50,50,60)
+ContentFrame.BackgroundTransparency = 0.05
 ContentFrame.Parent = MainFrame
 
--- Tab ekleme fonksiyonu (max 4 tab)
+local ContentLayout = Instance.new("UIListLayout")
+ContentLayout.FillDirection = Enum.FillDirection.Vertical
+ContentLayout.Padding = UDim.new(0,5)
+ContentLayout.Parent = ContentFrame
+
+-- Tab ekleme fonksiyonu
 function Library:AddTab(tabName)
     if #self.Tabs >= 4 then
         warn("Max 4 tab eklenebilir!")
@@ -159,24 +175,32 @@ function Library:AddTab(tabName)
     end
 
     local TabButton = Instance.new("TextButton")
-    TabButton.Size = UDim2.new(1,0,0,30)
-    TabButton.BackgroundColor3 = Color3.fromRGB(60,60,60)
-    TabButton.Text = tabName
+    TabButton.Size = UDim2.new(1,0,0,35)
+    TabButton.BackgroundColor3 = Color3.fromRGB(60,60,80)
     TabButton.TextColor3 = Color3.fromRGB(255,255,255)
     TabButton.Font = Enum.Font.GothamBold
-    TabButton.TextSize = 14
+    TabButton.TextSize = 16
+    TabButton.Text = tabName
     TabButton.Parent = TabBar
+
+    -- Hover animasyon
+    TabButton.MouseEnter:Connect(function()
+        TabButton.BackgroundColor3 = Color3.fromRGB(0,170,255)
+    end)
+    TabButton.MouseLeave:Connect(function()
+        TabButton.BackgroundColor3 = Color3.fromRGB(60,60,80)
+    end)
 
     local TabContent = Instance.new("ScrollingFrame")
     TabContent.Size = UDim2.new(1,0,1,0)
-    TabContent.Visible = false
     TabContent.BackgroundTransparency = 1
     TabContent.ScrollBarThickness = 6
+    TabContent.Visible = false
     TabContent.Parent = ContentFrame
 
     local UIList = Instance.new("UIListLayout")
-    UIList.Padding = UDim.new(0,5)
     UIList.FillDirection = Enum.FillDirection.Vertical
+    UIList.Padding = UDim.new(0,5)
     UIList.Parent = TabContent
 
     local tabData = {
@@ -197,17 +221,7 @@ function Library:AddTab(tabName)
     return TabContent
 end
 
--- Örnek kullanım
---[[
-local lib = require(path_to_library)
-local tab1 = lib:AddTab("ESP")
-local tab2 = lib:AddTab("Aimbot")
-local tab3 = lib:AddTab("Misc")
-local tab4 = lib:AddTab("Settings")
--- TabButton’lara basınca ilgili ContentFrame görünecek
-]]
-
--- Part 3: Section sistemi + Section başlıkları
+-- Section ekleme fonksiyonu (her tab max 4 section)
 function Library:AddSection(tabContent, sectionName)
     if not tabContent.Sections then tabContent.Sections = {} end
     if #tabContent.Sections >= 4 then
@@ -216,19 +230,14 @@ function Library:AddSection(tabContent, sectionName)
     end
 
     local SecFrame = Instance.new("Frame")
-    SecFrame.Size = UDim2.new(1,-10,0,100)
-    SecFrame.Position = UDim2.new(0,5,0,#tabContent.Sections*105)
-    SecFrame.BackgroundColor3 = Color3.fromRGB(60,60,60)
+    SecFrame.Size = UDim2.new(1,-10,0,120)
+    SecFrame.BackgroundColor3 = Color3.fromRGB(70,70,90)
+    SecFrame.BackgroundTransparency = 0.05
     SecFrame.Parent = tabContent
 
     local UICorner = Instance.new("UICorner")
     UICorner.CornerRadius = UDim.new(0,8)
     UICorner.Parent = SecFrame
-
-    local UIStroke = Instance.new("UIStroke")
-    UIStroke.Color = Color3.fromRGB(80,80,80)
-    UIStroke.Thickness = 1
-    UIStroke.Parent = SecFrame
 
     local Title = Instance.new("TextLabel")
     Title.Size = UDim2.new(1,0,0,25)
@@ -246,87 +255,86 @@ function Library:AddSection(tabContent, sectionName)
     }
 
     table.insert(tabContent.Sections, sectionData)
-
-    -- Section içine Button ekleme
-    function sectionData:Button(txt,callback)
-        local Btn = Instance.new("TextButton")
-        Btn.Size = UDim2.new(1,-10,0,30)
-        Btn.Position = UDim2.new(0,5,0,25+#self.Elements*35)
-        Btn.BackgroundColor3 = Color3.fromRGB(80,80,80)
-        Btn.TextColor3 = Color3.fromRGB(255,255,255)
-        Btn.Font = Enum.Font.GothamBold
-        Btn.TextSize = 14
-        Btn.Text = txt
-        Btn.Parent = self.Frame
-        Btn.MouseButton1Click:Connect(function()
-            -- Buton basınca kısa animasyon
-            spawn(function()
-                Btn.BackgroundColor3 = Color3.fromRGB(0,170,255)
-                wait(0.1)
-                Btn.BackgroundColor3 = Color3.fromRGB(80,80,80)
-            end)
-            pcall(callback)
-        end)
-        table.insert(self.Elements,Btn)
-    end
-
-    -- Section içine Toggle ekleme
-    function sectionData:Toggle(txt,default,callback)
-        local state = default or false
-        local Tog = Instance.new("TextButton")
-        Tog.Size = UDim2.new(1,-10,0,30)
-        Tog.Position = UDim2.new(0,5,0,25+#self.Elements*35)
-        Tog.BackgroundColor3 = Color3.fromRGB(80,80,80)
-        Tog.TextColor3 = Color3.fromRGB(255,255,255)
-        Tog.Font = Enum.Font.GothamBold
-        Tog.TextSize = 14
-        Tog.Text = txt.." : "..tostring(state)
-        Tog.Parent = self.Frame
-        Tog.MouseButton1Click:Connect(function()
-            state = not state
-            Tog.Text = txt.." : "..tostring(state)
-            Tog.BackgroundColor3 = state and Color3.fromRGB(0,170,255) or Color3.fromRGB(80,80,80)
-            pcall(callback,state)
-        end)
-        table.insert(self.Elements,Tog)
-    end
-
-    -- Section içine Label ekleme
-    function sectionData:Label(txt)
-        local lbl = Instance.new("TextLabel")
-        lbl.Size = UDim2.new(1,-10,0,25)
-        lbl.Position = UDim2.new(0,5,0,25+#self.Elements*30)
-        lbl.BackgroundTransparency = 1
-        lbl.Text = txt
-        lbl.TextColor3 = Color3.fromRGB(255,255,255)
-        lbl.Font = Enum.Font.Gotham
-        lbl.TextSize = 14
-        lbl.TextXAlignment = Enum.TextXAlignment.Left
-        lbl.Parent = self.Frame
-        table.insert(self.Elements,lbl)
-    end
-
     return sectionData
 end
 
 -- Örnek kullanım:
 --[[
-local tab1 = lib:AddTab("ESP")
-local sec1 = lib:AddSection(tab1,"Player ESP")
-sec1:Toggle("Box ESP",false,function(s) print(s) end)
-sec1:Button("Highlight",function() print("Highlight clicked") end)
-sec1:Label("Demo Label")
+local tab1 = Library:AddTab("ESP")
+local sec1 = Library:AddSection(tab1,"Player ESP")
+-- sec1 içine toggle, button, slider vb. ekleyeceğiz Part3 ve Part4’te
 ]]
 
--- Part 4: Slider + ColorPicker + Animasyonlu elementler
+-- Part 3/5: Section içi elementler (Button, Toggle, Slider, Label, ColorPicker)
+
+-- Button ekleme
+function Library:SectionButton(section, text, callback)
+    local Btn = Instance.new("TextButton")
+    Btn.Size = UDim2.new(1,-10,0,30)
+    Btn.BackgroundColor3 = Color3.fromRGB(100,100,150)
+    Btn.TextColor3 = Color3.fromRGB(255,255,255)
+    Btn.Font = Enum.Font.GothamBold
+    Btn.TextSize = 14
+    Btn.Text = text
+    Btn.Parent = section.Frame
+    Btn.Position = UDim2.new(0,5,0,25+#section.Elements*35)
+
+    -- Hover animasyonu
+    Btn.MouseEnter:Connect(function()
+        Btn.BackgroundColor3 = Color3.fromRGB(0,170,255)
+    end)
+    Btn.MouseLeave:Connect(function()
+        Btn.BackgroundColor3 = Color3.fromRGB(100,100,150)
+    end)
+
+    Btn.MouseButton1Click:Connect(function()
+        pcall(callback)
+    end)
+
+    table.insert(section.Elements, Btn)
+end
+
+-- Toggle ekleme
+function Library:SectionToggle(section, text, default, callback)
+    local state = default or false
+    local Tog = Instance.new("TextButton")
+    Tog.Size = UDim2.new(1,-10,0,30)
+    Tog.BackgroundColor3 = Color3.fromRGB(100,100,150)
+    Tog.TextColor3 = Color3.fromRGB(255,255,255)
+    Tog.Font = Enum.Font.GothamBold
+    Tog.TextSize = 14
+    Tog.Text = text.." : "..tostring(state)
+    Tog.Position = UDim2.new(0,5,0,25+#section.Elements*35)
+    Tog.Parent = section.Frame
+
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0,6)
+    UICorner.Parent = Tog
+
+    Tog.MouseEnter:Connect(function()
+        Tog.BackgroundColor3 = state and Color3.fromRGB(0,170,255) or Color3.fromRGB(120,120,180)
+    end)
+    Tog.MouseLeave:Connect(function()
+        Tog.BackgroundColor3 = state and Color3.fromRGB(0,170,255) or Color3.fromRGB(100,100,150)
+    end)
+
+    Tog.MouseButton1Click:Connect(function()
+        state = not state
+        Tog.Text = text.." : "..tostring(state)
+        Tog.BackgroundColor3 = state and Color3.fromRGB(0,170,255) or Color3.fromRGB(100,100,150)
+        pcall(callback,state)
+    end)
+
+    table.insert(section.Elements, Tog)
+end
 
 -- Slider ekleme
-function Library:CreateSlider(section,text,min,max,default,callback)
+function Library:SectionSlider(section, text, min, max, default, callback)
     default = default or min
     local frame = Instance.new("Frame")
     frame.Size = UDim2.new(1,-10,0,40)
     frame.Position = UDim2.new(0,5,0,25+#section.Elements*45)
-    frame.BackgroundColor3 = Color3.fromRGB(50,50,50)
+    frame.BackgroundColor3 = Color3.fromRGB(80,80,120)
     frame.Parent = section.Frame
 
     local UICorner = Instance.new("UICorner")
@@ -346,7 +354,7 @@ function Library:CreateSlider(section,text,min,max,default,callback)
     local bar = Instance.new("Frame")
     bar.Size = UDim2.new(1,-10,0,10)
     bar.Position = UDim2.new(0,5,0,25)
-    bar.BackgroundColor3 = Color3.fromRGB(100,100,100)
+    bar.BackgroundColor3 = Color3.fromRGB(120,120,180)
     bar.Parent = frame
 
     local fill = Instance.new("Frame")
@@ -355,8 +363,12 @@ function Library:CreateSlider(section,text,min,max,default,callback)
     fill.Parent = bar
 
     local dragging = false
-    bar.InputBegan:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseButton1 then dragging=true end end)
-    bar.InputEnded:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseButton1 then dragging=false end end)
+    bar.InputBegan:Connect(function(i)
+        if i.UserInputType==Enum.UserInputType.MouseButton1 then dragging=true end
+    end)
+    bar.InputEnded:Connect(function(i)
+        if i.UserInputType==Enum.UserInputType.MouseButton1 then dragging=false end
+    end)
     UserInputService.InputChanged:Connect(function(i)
         if dragging and i.UserInputType==Enum.UserInputType.MouseMovement then
             local rel = math.clamp((i.Position.X-bar.AbsolutePosition.X)/bar.AbsoluteSize.X,0,1)
@@ -367,89 +379,64 @@ function Library:CreateSlider(section,text,min,max,default,callback)
         end
     end)
 
-    table.insert(section.Elements,frame)
+    table.insert(section.Elements, frame)
 end
 
--- ColorPicker ekleme
-function Library:CreateColorPicker(section,name,defaultColor,callback)
-    defaultColor = defaultColor or Color3.fromRGB(255,0,0)
-    local frame = Instance.new("Frame")
+-- Label ekleme
+function Library:SectionLabel(section, text)
+    local lbl = Instance.new("TextLabel")
+    lbl.Size = UDim2.new(1,-10,0,20)
+    lbl.Position = UDim2.new(0,5,0,25+#section.Elements*25)
+    lbl.BackgroundTransparency = 1
+    lbl.Text = text
+    lbl.TextColor3 = Color3.fromRGB(255,255,255)
+    lbl.Font = Enum.Font.Gotham
+    lbl.TextSize = 14
+    lbl.TextXAlignment = Enum.TextXAlignment.Left
+    lbl.Parent = section.Frame
+    table.insert(section.Elements, lbl)
+end
+
+-- ColorPicker (basit demo: tıkla rastgele renk)
+function Library:SectionColorPicker(section, text, default, callback)
+    default = default or Color3.fromRGB(255,0,0)
+    local frame = Instance.new("TextButton")
     frame.Size = UDim2.new(1,-10,0,30)
-    frame.Position = UDim2.new(0,5,0,25+#section.Elements*40)
-    frame.BackgroundColor3 = defaultColor
+    frame.Position = UDim2.new(0,5,0,25+#section.Elements*35)
+    frame.BackgroundColor3 = default
+    frame.Text = text
+    frame.TextColor3 = Color3.fromRGB(255,255,255)
+    frame.Font = Enum.Font.GothamBold
+    frame.TextSize = 14
     frame.Parent = section.Frame
 
     local UICorner = Instance.new("UICorner")
     UICorner.CornerRadius = UDim.new(0,6)
     UICorner.Parent = frame
 
-    local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(1,0,1,0)
-    label.BackgroundTransparency = 1
-    label.Text = name
-    label.TextColor3 = Color3.fromRGB(255,255,255)
-    label.Font = Enum.Font.Gotham
-    label.TextSize = 14
-    label.TextXAlignment = Enum.TextXAlignment.Left
-    label.Parent = frame
-
     frame.MouseButton1Click:Connect(function()
-        -- basit demo: rastgele renk değişimi (gerçek picker mobil için eklenebilir)
         local newColor = Color3.fromRGB(math.random(0,255),math.random(0,255),math.random(0,255))
         frame.BackgroundColor3 = newColor
         pcall(callback,newColor)
     end)
 
-    table.insert(section.Elements,frame)
+    table.insert(section.Elements, frame)
 end
 
--- Animasyonlu Toggle (hover ve renk)
-function Library:CreateAnimatedToggle(section,text,default,callback)
-    local state = default or false
-    local Tog = Instance.new("TextButton")
-    Tog.Size = UDim2.new(1,-10,0,30)
-    Tog.Position = UDim2.new(0,5,0,25+#section.Elements*35)
-    Tog.BackgroundColor3 = Color3.fromRGB(80,80,80)
-    Tog.TextColor3 = Color3.fromRGB(255,255,255)
-    Tog.Font = Enum.Font.GothamBold
-    Tog.TextSize = 14
-    Tog.Text = text.." : "..tostring(state)
-    Tog.Parent = section.Frame
+-- Part 4/5: Draggable + Mobil uyumlu responsive + Hover animasyonları
 
-    local UICorner = Instance.new("UICorner")
-    UICorner.CornerRadius = UDim.new(0,6)
-    UICorner.Parent = Tog
-
-    Tog.MouseEnter:Connect(function()
-        Tog.BackgroundColor3 = state and Color3.fromRGB(0,170,255) or Color3.fromRGB(100,100,100)
-    end)
-    Tog.MouseLeave:Connect(function()
-        Tog.BackgroundColor3 = state and Color3.fromRGB(0,170,255) or Color3.fromRGB(80,80,80)
-    end)
-
-    Tog.MouseButton1Click:Connect(function()
-        state = not state
-        Tog.Text = text.." : "..tostring(state)
-        Tog.BackgroundColor3 = state and Color3.fromRGB(0,170,255) or Color3.fromRGB(80,80,80)
-        pcall(callback,state)
-    end)
-
-    table.insert(section.Elements,Tog)
-end
-
--- Part 5: Final dokunuşlar ve mobil uyumlu draggable
-
--- Ana Frame draggable mobil uyumlu
-local dragging, dragInput, dragStart, startPos = false, nil, nil, nil
-
+-- Draggable ana pencere
+local dragging, dragInput, dragStart, startPos
 local function update(input)
     local delta = input.Position - dragStart
-    MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
-                                   startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    MainFrame.Position = UDim2.new(
+        startPos.X.Scale, startPos.X.Offset + delta.X,
+        startPos.Y.Scale, startPos.Y.Offset + delta.Y
+    )
 end
 
 MainFrame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType==Enum.UserInputType.Touch then
         dragging = true
         dragStart = input.Position
         startPos = MainFrame.Position
@@ -462,51 +449,90 @@ MainFrame.InputBegan:Connect(function(input)
 end)
 
 MainFrame.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement then
+    if input.UserInputType==Enum.UserInputType.MouseMovement or input.UserInputType==Enum.UserInputType.Touch then
         dragInput = input
     end
 end)
 
 UserInputService.InputChanged:Connect(function(input)
-    if input == dragInput and dragging then
+    if input==dragInput and dragging then
         update(input)
     end
 end)
 
--- Mobil uyumlu boyut ayarlama (responsive)
+-- Mobil ekran responsive ayar
 local function adjustSize()
     local screenSize = workspace.CurrentCamera.ViewportSize
     MainFrame.Size = UDim2.new(0.8,0,0.6,0)
     MainFrame.Position = UDim2.new(0.1,0,0.2,0)
     KeybindFrame.Position = UDim2.new(0,10,0.2,0)
 end
-
 workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(adjustSize)
 adjustSize()
 
--- Library final entegre: tüm elementler kullanılabilir
+-- Hover animasyonları tüm tab buttonları için
+for _, tab in pairs(Library.Tabs) do
+    tab.Button.MouseEnter:Connect(function()
+        tab.Button:TweenSize(UDim2.new(1,0,0,40), "Out", "Quad", 0.15, true)
+        tab.Button.BackgroundColor3 = Color3.fromRGB(0,170,255)
+    end)
+    tab.Button.MouseLeave:Connect(function()
+        tab.Button:TweenSize(UDim2.new(1,0,0,35), "Out", "Quad", 0.15, true)
+        tab.Button.BackgroundColor3 = Color3.fromRGB(60,60,80)
+    end)
+end
+
+-- Hover animasyonu Section başlıkları
+for _, tab in pairs(Library.Tabs) do
+    for _, section in pairs(tab.Sections) do
+        section.Frame.MouseEnter:Connect(function()
+            section.Frame:TweenSize(UDim2.new(1,-10,0,section.Frame.Size.Y.Offset+2), "Out", "Quad", 0.15, true)
+        end)
+        section.Frame.MouseLeave:Connect(function()
+            section.Frame:TweenSize(UDim2.new(1,-10,0,section.Frame.Size.Y.Offset-2), "Out", "Quad", 0.15, true)
+        end)
+    end
+end
+
+-- Watermark hover efekti (optional)
+Watermark.MouseEnter:Connect(function()
+    Watermark.TextColor3 = Color3.fromRGB(255,255,0)
+end)
+Watermark.MouseLeave:Connect(function()
+    Watermark.TextColor3 = Color3.fromRGB(0,255,0)
+end)
+
+-- Part 5/5: Final entegrasyon ve export
+
+-- Library içindeki tüm ana elementleri tut
 Library.MainFrame = MainFrame
 Library.TabBar = TabBar
 Library.ContentFrame = ContentFrame
 Library.KeybindFrame = KeybindFrame
-Library.ScreenGui = ScreenGui
 Library.Watermark = Watermark
 
--- Demo Watermark toggle
+-- Watermark toggle fonksiyonu
 function Library:ToggleWatermark(state)
     Watermark.Visible = state
 end
 
--- Örnek kullanım:
+-- Örnek kullanım fonksiyonları (demo)
 --[[
-local lib = require(path_to_library)
-local tab1 = lib:AddTab("ESP")
-local sec1 = lib:AddSection(tab1,"Player ESP")
-sec1:Toggle("Box ESP",false,function(s) print(s) end)
-lib:CreateSlider(sec1,"FOV",30,120,70,function(val) print(val) end)
-lib:CreateColorPicker(sec1,"ESP Color",Color3.fromRGB(0,255,0),function(c) print(c) end)
-lib:CreateAnimatedToggle(sec1,"Snaplines",true,function(s) print(s) end)
-lib:CreateKeybind("Toggle UI",Enum.KeyCode.RightControl,function() MainFrame.Visible = not MainFrame.Visible end)
+local tab1 = Library:AddTab("ESP")
+local sec1 = Library:AddSection(tab1,"Player ESP")
+Library:SectionToggle(sec1,"Box ESP",false,function(s) print("Box:",s) end)
+Library:SectionSlider(sec1,"FOV",30,120,70,function(val) print("FOV:",val) end)
+Library:SectionColorPicker(sec1,"ESP Color",Color3.fromRGB(0,255,0),function(c) print("Color:",c) end)
+Library:SectionButton(sec1,"Refresh ESP",function() print("Refreshed") end)
+Library:SectionLabel(sec1,"Player count: 0")
+
+Library:CreateKeybind("Toggle UI",Enum.KeyCode.RightControl,function()
+    MainFrame.Visible = not MainFrame.Visible
+end)
+
+Library:ToggleWatermark(true)
 ]]
 
+-- Library tek export
+-- Burada artık diğer part’lardaki 'return Library' ifadeleri kaldırılacak ve tek return olacak
 return Library
